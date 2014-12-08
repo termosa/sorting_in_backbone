@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   var getDefaultOptions, manageIndex, listenChanges,
-    helpToFindPrev, helpToShift, helpToSave,
+    helpToFindPrev, helpToShift,
     ignoreProperty, triggerUpdateId;
 
   ignoreProperty = "__ignoreManagingIndex";
@@ -87,60 +87,6 @@
       }) || null;
   };
 
-  helpToSave = function (model, opts, attrs) {
-    var deferred, promise, clientXhr,
-      after;
-
-    deferred = Q.defer();
-    promise = deferred.promise;
-
-    attrs = _.clone(attrs);
-    after = helpToFindPrev(model, opts);
-    attrs.after = after ? after.get("id") : null;
-    attrs.id = model.get("id");
-
-    if (true) { // I don't want to save it on the server
-      deferred.resolve();
-    } else {
-      (function __saving () {
-        attrs._method = "PATCH";
-        attrs._action = "reorder";
-        model.save(attrs).then(
-          function () {
-            delete model.attributes._method;
-            delete model.attributes._action;
-            deferred.resolve();
-          }, function () {
-            delete model.attributes._method;
-            delete model.attributes._action;
-            resume(opts.resumeOnCrash);
-            deferred.reject();
-          }
-        );
-      })();
-    }
-
-    clientXhr = {
-      then: promise.then,
-      catch: promise.catch,
-      finally: promise.finally,
-      success: function (callback) {
-        promise.then(function (response) {
-          callback(response.data, response.status, response.headers, clientXhr);
-        });
-        return promise;
-      },
-      error: function (callback) {
-        promise.then(null, function (response) {
-          callback(response.data, response.status, response.headers, clientXhr);
-        });
-        return promise;
-      }
-    };
-
-    return clientXhr;
-  };
-
   (function __listening() {
     var getListeners;
 
@@ -209,8 +155,6 @@
       });
       model.trigger("change", model, triggerOptions);
 
-      xhr = helpToSave(model, options, attrs);
-
       if (options[ignoreProperty]) return;
       if (ifUpdateGroup) {
         helpToShift(options, model, oldIndex, null, oldGroupByValue);
@@ -219,8 +163,6 @@
         helpToShift(options, model, oldIndex, index, model.get(options.groupBy));
       }
       options.collection.trigger(triggerUpdateId);
-
-      return xhr;
     };
     options.mixinModel = function (model) {
       model.saveIndex = saveIndex;
