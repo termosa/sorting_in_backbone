@@ -1,0 +1,22 @@
+{
+  "name": "sorting_in_backbone",
+  "version": "0.0.0",
+  "homepage": "https://github.com/termosa/sorting_in_backbone",
+  "authors": [
+    "Stanislav Termosa <termosa.stanislav@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.1.2",
+    "q": "1.0.1",
+    "bootstrap": "~3.3.1",
+    "jquery-ui": "~1.11.2"
+  }
+}
